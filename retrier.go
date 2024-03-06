@@ -10,6 +10,10 @@ import (
 // Retrier implements an exponentially backing off retry instance.
 // Use New instead of creating this object directly.
 type Retrier struct {
+	// Attempts is the number of remaining attempts.
+	// Unlimited when 0.
+	Attempts int
+
 	// Delay is the current delay between attempts.
 	Delay time.Duration
 
@@ -34,9 +38,10 @@ type Retrier struct {
 // New creates a retrier that exponentially backs off from floor to ceil pauses.
 func New(floor, ceil time.Duration) *Retrier {
 	return &Retrier{
-		Delay: 0,
-		Floor: floor,
-		Ceil:  ceil,
+		Attempts: 0,
+		Delay:    0,
+		Floor:    floor,
+		Ceil:     ceil,
 		// Phi scales more calmly than 2, but still has nice pleasing
 		// properties.
 		Rate: math.Phi,
@@ -70,6 +75,13 @@ func (r *Retrier) Wait(ctx context.Context) bool {
 
 	if r.Delay > r.Ceil {
 		r.Delay = r.Ceil
+	}
+
+	if r.Attempts > 0 {
+		if r.Attempts == 1 {
+			return false
+		}
+		r.Attempts--
 	}
 
 	select {
