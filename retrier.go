@@ -62,7 +62,9 @@ func (r *Retrier) Wait(ctx context.Context) bool {
 	default:
 	}
 
-	r.Delay = time.Duration(float64(r.Delay) * r.Rate)
+	if r.Delay < r.Ceil {
+		r.Delay = time.Duration(float64(r.Delay) * r.Rate)
+	}
 
 	r.Delay = applyJitter(r.Delay, r.Jitter)
 
