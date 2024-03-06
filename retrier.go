@@ -11,7 +11,7 @@ import (
 // Use New instead of creating this object directly.
 type Retrier struct {
 	// Attempts is the number of remaining attempts.
-	// Unlimited when 0.
+	// Unlimited when negative.
 	Attempts int
 
 	// Delay is the current delay between attempts.
@@ -38,7 +38,7 @@ type Retrier struct {
 // New creates a retrier that exponentially backs off from floor to ceil pauses.
 func New(floor, ceil time.Duration) *Retrier {
 	return &Retrier{
-		Attempts: 0,
+		Attempts: -1,
 		Delay:    0,
 		Floor:    floor,
 		Ceil:     ceil,
@@ -77,11 +77,12 @@ func (r *Retrier) Wait(ctx context.Context) bool {
 		r.Delay = r.Ceil
 	}
 
-	if r.Attempts > 0 {
-		if r.Attempts == 1 {
+	if r.Attempts >= 0 {
+		a := r.Attempts - 1
+		if a < 0 {
 			return false
 		}
-		r.Attempts--
+		r.Attempts = a
 	}
 
 	select {
