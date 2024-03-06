@@ -47,10 +47,9 @@ func applyJitter(d time.Duration, jitter float64) time.Duration {
 	if jitter == 0 {
 		return d
 	}
-	d *= time.Duration(1 + jitter*rand.NormFloat64())
-	if d < 0 {
-		return 0
-	}
+
+	d = time.Duration(rand.NormFloat64()*(jitter*float64(d)) + float64(d))
+
 	return d
 }
 
