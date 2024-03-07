@@ -1,3 +1,3 @@
-module github.com/coder/retry
+module github.com/WinPooh32/retry
 
 go 1.20

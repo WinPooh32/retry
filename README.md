@@ -2,10 +2,10 @@
 
 An exponentially backing off retry package for Go.
 
-[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/coder/retry)
+[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/WinPooh32/retry)
 
 ```
-go get github.com/coder/retry@latest
+go get github.com/WinPooh32/retry@latest
 ```
 
 `retry` promotes control flow using `for`/`goto` instead of callbacks.

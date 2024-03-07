@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/coder/retry"
+	"github.com/WinPooh32/retry"
 )
 
 func main() {
