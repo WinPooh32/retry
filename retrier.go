@@ -7,6 +7,26 @@ import (
 	"time"
 )
 
+type Option func(*Retrier)
+
+func Attempts(n int) Option {
+	return func(r *Retrier) {
+		r.Attempts = n
+	}
+}
+
+func Rate(x float64) Option {
+	return func(r *Retrier) {
+		r.Rate = x
+	}
+}
+
+func Jitter(j float64) Option {
+	return func(r *Retrier) {
+		r.Jitter = j
+	}
+}
+
 // Retrier implements an exponentially backing off retry instance.
 // Use New instead of creating this object directly.
 type Retrier struct {
@@ -36,8 +56,8 @@ type Retrier struct {
 }
 
 // New creates a retrier that exponentially backs off from floor to ceil pauses.
-func New(floor, ceil time.Duration) *Retrier {
-	return &Retrier{
+func New(floor, ceil time.Duration, opts ...Option) *Retrier {
+	r := &Retrier{
 		Attempts: -1,
 		Delay:    0,
 		Floor:    floor,
@@ -46,6 +66,12 @@ func New(floor, ceil time.Duration) *Retrier {
 		// properties.
 		Rate: math.Phi,
 	}
+
+	for _, setOpt := range opts {
+		setOpt(r)
+	}
+
+	return r
 }
 
 func applyJitter(d time.Duration, jitter float64) time.Duration {
